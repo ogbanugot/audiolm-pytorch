@@ -642,7 +642,7 @@ class SemanticTransformer(nn.Module):
 
         text_mask = None
         if not exists(text_embeds) and exists(text):
-            with torch.inference_mode():
+            with torch.no_grad():
                 text_embeds = self.embed_text(text, output_device = device)
                 text_mask = torch.any(text_embeds != 0, dim = -1)
 
@@ -828,7 +828,7 @@ class CoarseTransformer(nn.Module):
         assert not (self.has_condition ^ has_text)
 
         if not exists(text_embeds) and exists(text):
-            with torch.inference_mode():
+            with torch.no_grad():
                 text_embeds = self.embed_text(text, output_device = device)
 
         text_mask = None
@@ -1107,7 +1107,7 @@ class FineTransformer(nn.Module):
 
         text_mask = None
         if not exists(text_embeds) and exists(text):
-            with torch.inference_mode():
+            with torch.no_grad():
                 text_embeds = self.embed_text(text, output_device = device)
                 text_mask = torch.any(text_embeds != 0, dim = -1)
 
@@ -1356,7 +1356,7 @@ class SemanticTransformerWrapper(nn.Module):
         return self.transformer.embed_text(text, output_device = self.device)
 
     @eval_decorator
-    @torch.inference_mode()
+    @torch.no_grad()
     @beartype
     def generate(
         self,
@@ -1407,7 +1407,7 @@ class SemanticTransformerWrapper(nn.Module):
         assert not (self.transformer.has_condition ^ has_text)
 
         if not exists(text_embeds) and exists(text):
-            with torch.inference_mode():
+            with torch.no_grad():
                 text_embeds = self.transformer.embed_text(text, output_device = device)
 
         # start length and get running id output
@@ -1558,7 +1558,7 @@ class CoarseTransformerWrapper(nn.Module):
         return next(self.parameters()).device
 
     @eval_decorator
-    @torch.inference_mode()
+    @torch.no_grad()
     @beartype
     def generate(
         self,
@@ -1590,7 +1590,7 @@ class CoarseTransformerWrapper(nn.Module):
             coarse_token_ids = prime_coarse_token_ids
         elif exists(prime_wave):
             assert exists(self.codec)
-            with torch.inference_mode():
+            with torch.no_grad():
                 self.codec.eval()
 
                 _, indices, _ = self.codec(
@@ -1610,7 +1610,7 @@ class CoarseTransformerWrapper(nn.Module):
         assert not (self.transformer.has_condition ^ has_text)
 
         if not exists(text_embeds) and exists(text):
-            with torch.inference_mode():
+            with torch.no_grad():
                 text_embeds = self.transformer.embed_text(text, output_device = device)
 
         if self.unique_consecutive:
@@ -1722,7 +1722,7 @@ class CoarseTransformerWrapper(nn.Module):
         if not exists(coarse_token_ids):
             assert exists(self.codec), 'Codec must be provided if given raw wave for training'
 
-            with torch.inference_mode():
+            with torch.no_grad():
                 self.codec.eval()
                 _, indices, _ = self.codec(raw_wave_for_codec, return_encoded = True)
 
@@ -1846,7 +1846,7 @@ class FineTransformerWrapper(nn.Module):
         return next(self.parameters()).device
 
     @eval_decorator
-    @torch.inference_mode()
+    @torch.no_grad()
     @beartype
     def generate(
         self,
@@ -1877,7 +1877,7 @@ class FineTransformerWrapper(nn.Module):
         assert not (self.transformer.has_condition ^ has_text)
 
         if not exists(text_embeds) and exists(text):
-            with torch.inference_mode():
+            with torch.no_grad():
                 text_embeds = self.transformer.embed_text(text, output_device = device)
 
         # initialize fine token ids
@@ -1889,7 +1889,7 @@ class FineTransformerWrapper(nn.Module):
             fine_token_ids = prime_fine_token_ids
         elif exists(prime_wave):
             assert exists(self.codec)
-            with torch.inference_mode():
+            with torch.no_grad():
                 self.codec.eval()
                 _, token_ids, _ = self.codec(
                     prime_wave,
@@ -2012,7 +2012,7 @@ class FineTransformerWrapper(nn.Module):
         if exists(raw_wave):
             assert exists(self.codec), 'Codec must be provided if given raw wave for training'
 
-            with torch.inference_mode():
+            with torch.no_grad():
                 self.codec.eval()
                 _, token_ids, _ = self.codec(raw_wave, return_encoded = True)
 
@@ -2143,7 +2143,7 @@ class AudioLM(nn.Module):
         return next(self.parameters()).device
 
     @eval_decorator
-    @torch.inference_mode()
+    @torch.no_grad()
     def forward(
         self,
         *,

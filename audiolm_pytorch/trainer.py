@@ -677,7 +677,7 @@ class SoundStreamTrainer(nn.Module):
                 model.eval()
                 model = model.to(device)
 
-                with torch.inference_mode():
+                with torch.no_grad():
                     recons = model(wave, return_recons_only = True)
 
                 for ind, recon in enumerate(recons.unbind(dim = 0)):
@@ -970,7 +970,7 @@ class SemanticTransformerTrainer(nn.Module):
                 data_kwargs = self.data_tuple_to_kwargs(next(self.valid_dl_iter))
                 data_kwargs = dict_values_to_device(data_kwargs, unwrapped_model.device)
 
-                with torch.inference_mode():
+                with torch.no_grad():
                     unwrapped_model.eval()
                     valid_loss += unwrapped_model(**data_kwargs, return_loss = True)
 
@@ -1569,7 +1569,7 @@ class FineTransformerTrainer(nn.Module):
                 data_kwargs = self.data_tuple_to_kwargs(next(self.valid_dl_iter))
                 data_kwargs = dict_values_to_device(data_kwargs, unwrapped_model.device)
 
-                with torch.inference_mode():
+                with torch.no_grad():
                     unwrapped_model.eval()
                     valid_loss += unwrapped_model(**data_kwargs, return_loss = True)
 
