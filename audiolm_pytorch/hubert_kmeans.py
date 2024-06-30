@@ -96,7 +96,6 @@ class HubertWithKmeans(nn.Module):
         flatten = True,
         input_sample_hz = None
     ):
-        wav_input = torch.tensor(wav_input)
         batch, device = wav_input.shape[0], wav_input.device
 
         if exists(input_sample_hz):
