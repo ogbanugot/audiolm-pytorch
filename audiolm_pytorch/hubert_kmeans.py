@@ -96,7 +96,7 @@ class HubertWithKmeans(nn.Module):
         flatten = True,
         input_sample_hz = None
     ):
-        batch, device = len(wav_input), wav_input.device
+        batch, device = len(wav_input), wav_input[0].device
 
         if exists(input_sample_hz):
             wav_input = resample(wav_input, input_sample_hz, self.target_sample_hz)
