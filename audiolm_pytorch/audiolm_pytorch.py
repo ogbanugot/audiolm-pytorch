@@ -2122,7 +2122,7 @@ class FineTransformerWrapper(nn.Module):
                 _, token_ids, _ = self.codec(raw_wave, return_encoded=True)
 
                 batch, num_timesteps = raw_wave.shape
-                num_frames = int(num_timesteps / self.codec.seq_len_multiple_of)
+                num_frames = int(num_timesteps / self.codec.seq_len_multiple_of) + 1
                 assert token_ids.shape == torch.Size(
                     (batch, num_frames, self.num_coarse_quantizers + self.num_fine_quantizers)), \
                     f'Expected token ids to have shape {(batch, num_frames, self.num_coarse_quantizers + self.num_fine_quantizers)} (batch, num_frames, num_coarse_quantizers + ' \
